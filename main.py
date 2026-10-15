@@ -1,9 +1,8 @@
 from flask import Flask
 from configdb import db
 from dotenv import load_dotenv
-
 load_dotenv()
-
+from enviaremail import avisar_planos_a_vencer
 from blueprints.usuarios import usuarios_bp
 from blueprints.auth import auth_bp
 from blueprints.planos import planos_bp
@@ -33,5 +32,7 @@ with app.app_context():
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        avisar_planos_a_vencer()
     app.run()
 
