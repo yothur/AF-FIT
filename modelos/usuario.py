@@ -12,4 +12,4 @@ class Usuario(db.Model):
 
     @property
     def is_admin(self):
-        self.tipo == "admin"
+        return self.tipo == "admin"
