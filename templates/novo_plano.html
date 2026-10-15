@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | {{ 'Renovar' if usuario and usuario.plano else 'Novo' }} plano{% endblock %}
+
+{% block extra_css %}
+<style>
+.opcoes { display: grid; gap: 12px; margin-bottom: 24px; }
+.opcao { display: block; cursor: pointer; position: relative; }
+.opcao input { position: absolute; opacity: 0; pointer-events: none; }
+.opcao .caixa {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 16px 18px; background: var(--surface-2); border: 1px solid var(--line);
+    transition: border-color .2s;
+}
+.opcao .caixa strong { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .5px; }
+.opcao .caixa span { color: var(--muted); font-size: .85rem; text-align: right; }
+.opcao:hover .caixa { border-color: #444; }
+.opcao input:checked + .caixa { border-color: var(--red); background: rgba(255,61,71,.08); }
+.opcao input:focus-visible + .caixa { outline: 2px solid var(--red); outline-offset: 2px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if not usuario %}
+        <h1 class="page-title">Usuário <span>não encontrado</span></h1>
+        <p class="page-sub">Não foi possível localizar este usuário.</p>
+        <a class="btn" href="{{ url_for('usuarios.listarusuarios') }}">Voltar para a lista</a>
+    {% else %}
+        {% set renovando = true if usuario.plano else false %}
+        <p class="eyebrow">{{ usuario.nome }} &middot; {{ usuario.email }}</p>
+        <h1 class="page-title">{{ 'Renovar' if renovando else 'Novo' }} <span>plano</span></h1>
+        <p class="page-sub">Escolha um dos planos abaixo. Todos têm duração de 31 dias.</p>
+
+        <div class="card form-card">
+            <form method="post"
+                action="{{ url_for('planos.renovar_plano' if renovando else 'planos.novo_plano', usuario_id=usuario.id) }}">
+                <div class="opcoes">
+                    <label class="opcao">
+                        <input type="radio" name="escolha" value="essencial" required>
+                        <div class="caixa"><strong>Essencial</strong><span>Musculação + avaliação · 31 dias</span></div>
+                    </label>
+                    <label class="opcao">
+                        <input type="radio" name="escolha" value="performance">
+                        <div class="caixa"><strong>Performance</strong><span>Aulas coletivas + instrutor · 31 dias</span></div>
+                    </label>
+                    <label class="opcao">
+                        <input type="radio" name="escolha" value="elite">
+                        <div class="caixa"><strong>Elite</strong><span>Personal + nutrição · 31 dias</span></div>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-block">{{ 'Renovar plano' if renovando else 'Cadastrar plano' }}</button>
+            </form>
+            <br>
+            <a class="btn btn-outline btn-block" href="{{ url_for('usuarios.listarusuarios') }}" style="text-align:center">Cancelar</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

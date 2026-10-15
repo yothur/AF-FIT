@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | Usuários{% endblock %}
+
+{% block extra_css %}
+<style>
+.venc-vencido { color: var(--red); font-weight: 600; }
+.sem-dado { color: var(--muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <p class="eyebrow">Alunos</p>
+    <h1 class="page-title">Lista de <span>usuários</span></h1>
+    <p class="page-sub">Acompanhe os planos e faça renovações ou remoções direto da tabela.</p>
+
+    {% set alunos = (usuarios or []) | rejectattr('is_admin') | list %}
+
+    {# data-lista-alunos e data-aluno/data-status: usados pelo painel (principal.html) para contar alunos e planos #}
+    <div class="table-wrap" data-lista-alunos>
+        {% if alunos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Plano</th>
+                    <th>Vence em</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in alunos %}
+                {# Nome do plano e data de vencimento: tenta os nomes de atributo mais comuns do modelo Plano #}
+                {% set p = u.plano %}
+                {% set nome_plano = (p.nome or p.tipo or p.escolha or p.plano) if p else none %}
+                {% set vencimento = (p.data_vencimento or p.vencimento or p.data_fim or p.validade or p.expira_em) if p else none %}
+                <tr data-aluno data-status="{{ 'sem-plano' if not u.plano else ('vencido' if u.plano.is_expired else 'ativo') }}">
+                    <td>{{ u.nome }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        {% if nome_plano %}{{ nome_plano | string | title }}{% else %}<span class="sem-dado">—</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if vencimento %}
+                            <span class="{{ 'venc-vencido' if p.is_expired else '' }}">{{ vencimento.strftime('%d/%m/%Y') if vencimento.strftime is defined else vencimento }}</span>
+                        {% else %}
+                            <span class="sem-dado">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not u.plano %}
+                            <span class="badge">Sem plano</span>
+                        {% elif u.plano.is_expired %}
+                            <span class="badge badge-red">Vencido</span>
+                        {% else %}
+                            <span class="badge badge-ok">Ativo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="acoes">
+                            {% if not u.plano %}
+                                <a class="btn btn-sm" href="{{ url_for('planos.novo_plano', usuario_id=u.id) }}">Novo plano</a>
+                            {% else %}
+                                <a class="btn btn-sm btn-outline" href="{{ url_for('planos.renovar_plano', usuario_id=u.id) }}">Renovar</a>
+                                <form method="post"
+                                    action="{{ url_for('planos.remover_plano', usuario_id=u.id) }}"
+                                    onsubmit="return confirm('Remover o plano de {{ u.nome }}?');">
+                                    <button type="submit" class="btn btn-sm btn-outline">Remover</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="vazio">
+            <p>Nenhum usuário cadastrado ainda.</p>
+            <br>
+            <a class="btn btn-sm" href="{{ url_for('usuarios.cadastrarusuario') }}">Cadastrar o primeiro</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
