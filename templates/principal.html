@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | Painel{% endblock %}
+
+{% block extra_css %}
+<style>
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    background: var(--surface);
+    border: 1px solid var(--line);
+    margin-bottom: 36px;
+}
+.stat { padding: 28px 24px; text-align: center; border-right: 1px solid var(--line); }
+.stat:last-child { border-right: none; }
+.stat-num {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--red);
+}
+.stat-label {
+    display: block;
+    margin-top: 10px;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+}
+@media (max-width: 640px) {
+    .stat { border-right: none; border-bottom: 1px solid var(--line); }
+    .stat:last-child { border-bottom: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <p class="eyebrow">Painel administrativo</p>
+    <h1 class="page-title">Bem-vindo ao <span>AFFIT</span></h1>
+    <p class="page-sub">Acompanhe os números da academia e escolha uma das opções abaixo para gerenciar alunos e planos.</p>
+
+    <div class="stats" data-url-lista="{{ url_for('usuarios.listarusuarios') }}">
+        <div class="stat">
+            <strong class="stat-num" id="stat-alunos">—</strong>
+            <span class="stat-label">Alunos matriculados</span>
+        </div>
+        <div class="stat">
+            <strong class="stat-num" id="stat-ativos">—</strong>
+            <span class="stat-label">Planos ativos</span>
+        </div>
+        <div class="stat">
+            <strong class="stat-num" id="stat-vencidos">—</strong>
+            <span class="stat-label">Planos vencidos</span>
+        </div>
+        <div class="stat">
+            <strong class="stat-num">3</strong>
+            <span class="stat-label">Planos disponíveis</span>
+        </div>
+    </div>
+
+    <div class="grid grid-3">
+        <a class="card card-link" href="{{ url_for('usuarios.cadastrarusuario') }}">
+            <h3>Cadastrar usuário</h3>
+            <p>Adicione um novo aluno com nome e e-mail.</p>
+            <span class="arrow">Cadastrar &rarr;</span>
+        </a>
+
+        <a class="card card-link" href="{{ url_for('usuarios.listarusuarios') }}">
+            <h3>Listar usuários</h3>
+            <p>Veja todos os alunos, o status dos planos e gerencie renovações.</p>
+            <span class="arrow">Ver lista &rarr;</span>
+        </a>
+
+        <a class="card card-link" href="{{ url_for('planos.pagina_planos') }}">
+            <h3>Planos</h3>
+            <p>Consulte os planos disponíveis na academia.</p>
+            <span class="arrow">Ver planos &rarr;</span>
+        </a>
+    </div>
+</div>
+
+<script>
+(function () {
+    var urlLista = document.querySelector('[data-url-lista]').getAttribute('data-url-lista');
+
+    function mostrar(id, valor) {
+        var el = document.getElementById(id);
+        if (el) { el.textContent = valor; }
+    }
+
+    fetch(urlLista, { credentials: 'same-origin' })
+        .then(function (resp) { return resp.text(); })
+        .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+
+            if (!doc.querySelector('[data-lista-alunos]')) { return; }
+
+            var linhas = doc.querySelectorAll('tr[data-aluno]');
+            var ativos = 0, vencidos = 0;
+            linhas.forEach(function (tr) {
+                var status = tr.getAttribute('data-status');
+                if (status === 'ativo') { ativos++; }
+                else if (status === 'vencido') { vencidos++; }
+            });
+
+            mostrar('stat-alunos', linhas.length);
+            mostrar('stat-ativos', ativos);
+            mostrar('stat-vencidos', vencidos);
+        })
+        .catch(function () {});
+})();
+</script>
+{% endblock %}
