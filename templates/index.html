@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | Entrar{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(90deg, rgba(10,10,10,.96) 35%, rgba(10,10,10,.6)),
+        radial-gradient(circle at 80% 30%, rgba(255,61,71,.25), transparent 55%),
+        var(--bg);
+}
+.hero-inner {
+    width: min(1100px, 88vw);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 56px;
+    align-items: center;
+    padding: 48px 0;
+}
+.hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.05; margin-bottom: 18px; }
+.hero h1 span { color: var(--red); }
+.hero p { color: var(--muted); max-width: 460px; }
+.login-card { padding: 34px; }
+.login-card h2 { font-size: 1.5rem; margin-bottom: 24px; }
+@media (max-width: 820px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-inner">
+        <div>
+            <p class="eyebrow">Área administrativa</p>
+            <h1>Força em movimento.<br><span>Gestão sem esforço.</span></h1>
+            <p>Cadastre alunos, controle planos e acompanhe vencimentos da sua academia em um só lugar.</p>
+        </div>
+
+        <div class="card login-card">
+            <h2>Entrar</h2>
+            <form method="post" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label class="campo" for="email">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="admin@affit.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="campo" for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-block">Acessar painel</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

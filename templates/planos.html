@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | Planos{% endblock %}
+
+{% block extra_css %}
+<style>
+.plano { text-align: center; position: relative; }
+.plano .preco { font-family: 'Oswald', sans-serif; font-size: 2.6rem; color: var(--red); line-height: 1; margin: 14px 0 4px; }
+.plano .periodo { color: var(--muted); font-size: .85rem; margin-bottom: 20px; display: block; }
+.plano ul { list-style: none; margin-bottom: 24px; color: var(--muted); font-size: .92rem; }
+.plano li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.plano.destaque { border-color: var(--red); }
+.plano .selo {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--red); color: #fff; padding: 2px 14px;
+    font-family: 'Oswald', sans-serif; font-size: .7rem; text-transform: uppercase; letter-spacing: 1px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <p class="eyebrow">Escolha seu ritmo</p>
+    <h1 class="page-title">Nossos <span>planos</span></h1>
+    <p class="page-sub">Todos os planos têm duração de 31 dias. Para atribuir um plano a um aluno, vá até a lista de usuários e use o botão "Novo plano".</p>
+
+    <div class="grid grid-3">
+        <div class="card plano">
+            <h3>Essencial</h3>
+            <div class="preco">31 dias</div>
+            <span class="periodo">de acesso</span>
+            <ul>
+                <li>Acesso livre à musculação</li>
+                <li>Vestiários e armários</li>
+                <li>Avaliação física inicial</li>
+            </ul>
+        </div>
+
+        <div class="card plano destaque">
+            <span class="selo">Mais escolhido</span>
+            <h3>Performance</h3>
+            <div class="preco">31 dias</div>
+            <span class="periodo">de acesso</span>
+            <ul>
+                <li>Tudo do plano Essencial</li>
+                <li>Aulas coletivas: boxe, yoga e funcional</li>
+                <li>Acompanhamento de treino com instrutor</li>
+                <li>Reavaliação física ao final do plano</li>
+            </ul>
+        </div>
+
+        <div class="card plano">
+            <h3>Elite</h3>
+            <div class="preco">31 dias</div>
+            <span class="periodo">de acesso</span>
+            <ul>
+                <li>Tudo do plano Performance</li>
+                <li>Personal trainer 2x por semana</li>
+                <li>Plano nutricional personalizado</li>
+                <li>Acesso em qualquer horário</li>
+                <li>1 convidado por semana</li>
+            </ul>
+        </div>
+    </div>
+
+    <br>
+    <a class="btn" href="{{ url_for('usuarios.listarusuarios') }}">Ir para a lista de usuários</a>
+</div>
+{% endblock %}
