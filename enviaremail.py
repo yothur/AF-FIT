@@ -1,7 +1,6 @@
 import smtplib
 from email.message import EmailMessage
 import os
-import smtplib
 from datetime import date
 from html import escape
 from repository.usuariodao import UsuarioDAO
