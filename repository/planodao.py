@@ -10,21 +10,11 @@ class PlanoDAO:
     @staticmethod
     def renovar_plano(id, escolha):
         plano = Plano.query.filter_by(usuario_id=id).first()
-
-        if plano is None:
-            return False
-
         plano.renew(escolha)
         db.session.commit()
-        return True
 
     @staticmethod
     def remover(id):
         plano = Plano.query.filter_by(usuario_id=id).first()
-        if plano:
-            db.session.delete(plano)
-            db.session.commit()
-            return True
-        return False
-
-
+        db.session.delete(plano)
+        db.session.commit()
