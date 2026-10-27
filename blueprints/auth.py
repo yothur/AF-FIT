@@ -1,7 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
-from usuario_operacoes import is_authenticate
-
-from repository.usuariodao import UsuarioDAO
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from services.auth_services import is_authenticate, logar
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -16,16 +14,12 @@ def pagina_principal():
 def login():
     if is_authenticate():
         return redirect(url_for('usuarios.pagina_inicial'))
-
-    email = request.form.get('email').strip()
-    senha = request.form.get('senha')
-
-    usuario = UsuarioDAO.buscar_por_email(email)
-
-    if usuario and usuario.senha == senha and usuario.is_admin:
-        session['usuario_id'] = usuario.id
+    try:
+        logar(request.form.get('email').strip(), request.form.get('senha'))
         return redirect(url_for('usuarios.pagina_inicial'))
-    return render_template('index.html', mensagem='Erro ao fazer login'), 401
+    except ValueError as error:
+        flash(str(error), 'erro')
+    return render_template('index.html')
 
 @auth_bp.route('/logout')
 def logout():
