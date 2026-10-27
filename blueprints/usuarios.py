@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, request
-from usuario_operacoes import is_authenticate
+from flask import Blueprint, render_template, request, flash
+from services.auth_services import is_authenticate
+from services.usuario_services import cadastrar
 
-from modelos.usuario import Usuario
 from repository.usuariodao import UsuarioDAO
+
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
@@ -16,22 +17,14 @@ def cadastrarusuario():
     if is_authenticate():
         if request.method == 'GET':
             return render_template('cadastrarusuario.html')
-
-        nome = request.form.get('nome')
-        email = request.form.get('email')
-
-        usuario = UsuarioDAO.buscar_por_email(email)
-
-        if usuario:
-            return render_template('cadastrarusuario.html', mensagem='Usuario Existente!'), 401
-
-        UsuarioDAO.salvar(Usuario(nome=nome, email=email))
-
-        msg = "Usuário Cadastrado!"
+        try:
+            cadastrar(request.form.get('nome'), request.form.get('email'))
+            return render_template('principal.html', msg="Usuário Cadastrado!")
+        except ValueError as error:
+            flash(str(error), 'erro')
+            return render_template('principal.html')
     else:
-        msg = "Erro no Cadastro!"
-
-    return render_template('principal.html', msg=msg)
+        return render_template("index.html")
 
 @usuarios_bp.route('/listarusuarios')
 def listarusuarios():

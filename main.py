@@ -15,7 +15,7 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # [CONECTAR COM O BANCO] - app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:senha@localhost:5432/nome-do-banco'
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    'postgresql+psycopg2://postgres:12345@localhost:5432/AFFIT'
+    'postgresql+psycopg2://postgres:femtogodhand8@localhost:5432/AFFIT'
 )
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -36,3 +36,4 @@ if __name__ == "__main__":
         avisar_planos_a_vencer()
     app.run()
 
+#host='0.0.0.0', port=5000
