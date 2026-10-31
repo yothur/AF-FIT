@@ -21,8 +21,6 @@ class Plano(db.Model):
     @property
     def is_expired(self):
         vencimento = self.vencimento
-        if vencimento.tzinfo is None:
-            vencimento = vencimento.replace(tzinfo=timezone.utc)
         return datetime.now(timezone.utc) >= vencimento
 
     def renew(self, escolha):
