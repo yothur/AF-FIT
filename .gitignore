@@ -11,3 +11,7 @@ env/
 # Arquivos temporários Python
 __pycache__/
 *.py[cod]
+
+# Editor
+.vscode/
+.idea
