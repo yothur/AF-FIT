@@ -23,8 +23,7 @@ def cadastrarusuario():
         except ValueError as error:
             flash(str(error), 'erro')
             return render_template('principal.html')
-    else:
-        return render_template("index.html")
+    return render_template("index.html")
 
 @usuarios_bp.route('/listarusuarios')
 def listarusuarios():
