@@ -1,5 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for, flash
-
+from flask import Blueprint, render_template, request, flash
 from modelos.usuario import Usuario
 from services.auth_services import is_authenticate
 from services.plano_services import criar_plano, renovacao_plano, remocao_plano
@@ -19,10 +18,9 @@ def novo_plano(usuario_id):
             try:
                 criar_plano(usuario_id, request.form.get('escolha'))
                 flash('Plano Cadastrado.', 'sucesso')
-                return render_template('principal.html')
             except ValueError as error:
                 flash(str(error), 'erro')
-                return render_template('novo_plano.html', usuario=Usuario.query.get(usuario_id))
+            return render_template('principal.html')
         return render_template('novo_plano.html', usuario=Usuario.query.get(usuario_id))
     return render_template('index.html')
 
@@ -34,10 +32,9 @@ def renovar_plano(usuario_id):
             try:
                 renovacao_plano(usuario_id, request.form.get('escolha'))
                 flash('Plano Renovado!', 'sucesso')
-                return render_template('principal.html')
             except ValueError as error:
                 flash(str(error), 'erro')
-                return render_template('principal.html')
+            return render_template('principal.html')
         return render_template('novo_plano.html', usuario=Usuario.query.get(usuario_id))
     return render_template('index.html')
 
@@ -51,5 +48,6 @@ def remover_plano(usuario_id):
                 flash('Plano removido!', 'sucesso')
             except ValueError as error:
                 flash(str(error), 'erro')
-        return redirect(url_for('usuarios.listarusuarios'))
+            return render_template('principal.html')
+        return render_template('remocao_plano.html', usuario=Usuario.query.get(usuario_id))
     return render_template('index.html')

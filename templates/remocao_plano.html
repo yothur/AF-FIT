@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}AFFIT | Remover plano{% endblock %}
+
+{% block extra_css %}
+<style>
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 24px;
+}
+.resumo div { background: var(--surface-2); padding: 16px 18px; }
+.resumo .rotulo {
+    display: block;
+    margin-bottom: 6px;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+}
+.resumo .valor { font-family: 'Oswald', sans-serif; font-size: 1.15rem; text-transform: uppercase; letter-spacing: .5px; }
+.venc-vencido { color: var(--red); }
+
+.aviso-perigo {
+    border-left: 4px solid var(--red);
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    background: rgba(255,61,71,.08);
+    color: #ff8a90;
+    font-size: .95rem;
+}
+.aviso-perigo strong { color: var(--text); }
+.voltar { text-align: center; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% set p = usuario.plano if usuario else none %}
+    {% set nome_plano = (p.nome or p.tipo or p.escolha or p.plano) if p else none %}
+    {% set vencimento = (p.data_vencimento or p.vencimento or p.data_fim or p.validade or p.expira_em) if p else none %}
+    {% set expirado = p.is_expired if p else false %}
+
+    <p class="eyebrow">{% if usuario %}{{ usuario.nome }} &middot; {{ usuario.email }}{% else %}—{% endif %}</p>
+    <h1 class="page-title">Remover <span>plano</span></h1>
+    <p class="page-sub">Confirme a remoção do plano abaixo. Somente o plano é removido: o cadastro do aluno continua.</p>
+
+    <div class="card form-card" style="max-width: 560px;">
+        <div class="resumo">
+            <div>
+                <span class="rotulo">Aluno</span>
+                <span class="valor">{{ usuario.nome if usuario else '—' }}</span>
+            </div>
+            <div>
+                <span class="rotulo">Plano</span>
+                <span class="valor">{% if nome_plano %}{{ nome_plano | string | title }}{% else %}—{% endif %}</span>
+            </div>
+            <div>
+                <span class="rotulo">{{ 'Venceu em' if expirado else 'Vence em' }}</span>
+                <span class="valor {{ 'venc-vencido' if expirado else '' }}">
+                    {% if vencimento %}{{ vencimento.strftime('%d/%m/%Y') if vencimento.strftime is defined else vencimento }}{% else %}—{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="aviso-perigo">
+            <strong>Esta ação não pode ser desfeita.</strong>
+            {% if p and not expirado %}Este plano ainda está ativo: o aluno perde o acesso assim que ele for removido.{% elif p %}Depois de removido, será preciso cadastrar um plano novo para o aluno.{% endif %}
+        </div>
+
+        <form method="post">
+            <button type="submit" class="btn btn-block">Confirmar remoção</button>
+        </form>
+        <br>
+        <a class="btn btn-outline btn-block voltar" href="{{ url_for('usuarios.listarusuarios') }}">Cancelar</a>
+    </div>
+</div>
+{% endblock %}
