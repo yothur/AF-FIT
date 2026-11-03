@@ -15,6 +15,7 @@
     <h1 class="page-title">Lista de <span>usuários</span></h1>
     <p class="page-sub">Acompanhe os planos e faça renovações ou remoções direto da tabela.</p>
 
+    {# Administradores não aparecem na lista #}
     {% set alunos = (usuarios or []) | rejectattr('is_admin') | list %}
 
     {# data-lista-alunos e data-aluno/data-status: usados pelo painel (principal.html) para contar alunos e planos #}
@@ -65,11 +66,7 @@
                                 <a class="btn btn-sm" href="{{ url_for('planos.novo_plano', usuario_id=u.id) }}">Novo plano</a>
                             {% else %}
                                 <a class="btn btn-sm btn-outline" href="{{ url_for('planos.renovar_plano', usuario_id=u.id) }}">Renovar</a>
-                                <form method="post"
-                                    action="{{ url_for('planos.remover_plano', usuario_id=u.id) }}"
-                                    onsubmit="return confirm('Remover o plano de {{ u.nome }}?');">
-                                    <button type="submit" class="btn btn-sm btn-outline">Remover</button>
-                                </form>
+                                <a class="btn btn-sm btn-outline" href="{{ url_for('planos.remover_plano', usuario_id=u.id) }}">Remover</a>
                             {% endif %}
                         </div>
                     </td>
