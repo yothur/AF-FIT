@@ -17,4 +17,3 @@ def logar(email, senha):
         session['usuario_id'] = usuario.id
     else:
         raise ValueError("Erro ao fazer login")
-    return usuario.id
